@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { MinimalKeyDownEvent } from '@/App.vue'
 import { MatchResult, matchWord } from '@/matcher'
 import { computed } from 'vue'
 
@@ -6,6 +7,8 @@ const props = defineProps<{
   queries: string[], // Matches shown
   answer: string
 }>()
+
+const emit = defineEmits<{(e: 'keydown', event: MinimalKeyDownEvent): void}>()
 
 const keyboardRows = [
   'qwertyuiop',
@@ -48,6 +51,14 @@ const characterMatchDict = computed(() => {
   return matchDict
 })
 
+// Keyboard presser
+function pressKey (ch: string) {
+  console.log(ch)
+  emit('keydown', {
+    code: 'Key' + ch.toUpperCase(),
+    key: ch.toUpperCase()
+  })
+}
 </script>
 
 <template>
@@ -55,7 +66,7 @@ const characterMatchDict = computed(() => {
 <div class="keyboard">
   <div class="keyboard-row" v-for='row, i in keyboardRows' :key="i">
     <div class="keyboard-char"
-      v-for="ch in row" :key="ch"
+      v-for="ch in row" :key="ch" @click="pressKey(ch)"
       :class="[`wordle-match-${characterMatchDict[ch]}`]"
     >{{ch.toUpperCase()}}</div>
   </div>
@@ -75,6 +86,8 @@ const characterMatchDict = computed(() => {
       border: 1px solid black;
       background-color: #eee;
       margin: 0.1em;
+
+      user-select: none;
     }
   }
 }

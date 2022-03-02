@@ -2,7 +2,7 @@
 
 <div id="app">
   <WordleView :answer="answer" :query="query" :nextQuery="nextQuery" :try-count="6" />
-  <KeyboardView :queries="query" :answer="answer" />
+  <KeyboardView :queries="query" :answer="answer" @keydown='onKey'/>
 </div>
 </template>
 
@@ -12,6 +12,11 @@ import WordleView from './components/WordleView.vue'
 import KeyboardView from './components/KeyboardView.vue'
 
 import './wordle.scss'
+
+export interface MinimalKeyDownEvent {
+  code: string
+  key: string
+}
 
 export default defineComponent({
   name: 'App',
@@ -36,7 +41,7 @@ export default defineComponent({
       this.query.push(this.nextQuery)
       this.nextQuery = ''
     },
-    onKey (e: KeyboardEvent) {
+    onKey (e: MinimalKeyDownEvent) {
       // Handle backspace
       if (e.code === 'Backspace') {
         if (this.nextQuery.length > 0) {
