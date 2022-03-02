@@ -2,22 +2,22 @@
 
 <div id="app">
   <WordleView :answer="answer" :query="query" :nextQuery="nextQuery" :try-count="6" />
+  <KeyboardView :queries="query" :answer="answer" />
 </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import WordleView from './components/WordleView.vue'
+import KeyboardView from './components/KeyboardView.vue'
+
+import './wordle.scss'
 
 export default defineComponent({
   name: 'App',
   data () {
     return {
-      query: [
-        'apple',
-        'crane',
-        'delta'
-      ],
+      query: [] as string[],
       nextQuery: '',
       answer: 'pulse'
     }
@@ -58,7 +58,8 @@ export default defineComponent({
     }
   },
   components: {
-    WordleView
+    WordleView,
+    KeyboardView
   }
 })
 </script>

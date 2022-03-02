@@ -52,19 +52,6 @@ const matchClassMatrix = computed(() => {
       height: 2em;
       line-height: 2em;
       margin: 0 .1em;
-
-      &.wordle-match-exact {
-        background: #6eec45;
-      }
-
-      &.wordle-match-misplaced {
-        background: #ffee9b;
-      }
-
-      &.wordle-match-none {
-        background: #444;
-        color: #fff;
-      }
     }
   }
 }
