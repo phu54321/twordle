@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { matchWord } from '@/matcher'
 import { computed } from 'vue'
+import { calculateMatchResultMatrix } from './utils/calculateMatchResultMatrix'
 
 const props = defineProps<{
   queries: string[],
@@ -10,10 +10,7 @@ const props = defineProps<{
 }>()
 
 const wordLength = computed(() => props.answer.length)
-const matchClassMatrix = computed(() => {
-  return props.queries.map(q => matchWord(q, props.answer))
-    .map(s => s.map(q => `wordle-match-${q}`))
-})
+const matchResultMatrix = calculateMatchResultMatrix(props)
 
 </script>
 
@@ -22,7 +19,7 @@ const matchClassMatrix = computed(() => {
 <div class="wordle-table">
   <div class="wordle-row" v-for='_, i in tryCount' :key="i">
     <template v-if="queries[i] !== undefined">
-      <div class="wordle-char" :class="[matchClassMatrix[i][j]]" v-for="_, j in wordLength" :key="j">{{queries[i][j].toUpperCase()}}</div>
+      <div class="wordle-char" :class="[`wordle-match-${matchResultMatrix[i][j]}`]" v-for="_, j in wordLength" :key="j">{{queries[i][j].toUpperCase()}}</div>
     </template>
     <template v-else-if="queries.length === i">
       <div class="wordle-char" v-for="_, j in wordLength" :key="j">

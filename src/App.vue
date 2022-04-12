@@ -60,7 +60,7 @@ onBeforeUnmount(() => {
 
 <template>
 <WordleView :answer="answer" :queries="queries" :try-count="tryCount" :last-query="lastQuery" />
-<VirtualKeyboard @keyClick='onKeyClick' />
+<VirtualKeyboard :answer="answer" :queries="queries" @keyClick='onKeyClick' />
 </template>
 
 <style lang="scss">

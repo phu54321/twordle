@@ -1,6 +1,42 @@
 <script setup lang="ts">
 
+import { MatchResult } from '@/matcher'
+import { computed } from '@vue/reactivity'
 import { ref } from 'vue'
+import { calculateMatchResultMatrix } from './utils/calculateMatchResultMatrix'
+
+const props = defineProps<{
+  queries: string[],
+  answer: string
+}>()
+const matchResultMatrix = calculateMatchResultMatrix(props)
+const alphabetMatchResultMap = computed(() => {
+  const ret: { [ch: string]: MatchResult } = {}
+  for (let row = 0; row < props.queries.length; row++) {
+    const query = props.queries[row]
+    const matchResultList = matchResultMatrix.value[row]
+    for (let chPos = 0; chPos < query.length; chPos++) {
+      const ch = query[chPos]
+      const matchResult = matchResultList[chPos]
+      switch (ret[ch]) {
+        case 'exact':
+          break
+
+        case 'misplaced':
+          if (matchResult === 'exact') {
+            ret[ch] = matchResult
+          }
+          break
+
+        case 'none':
+        case undefined:
+          ret[ch] = matchResult
+          break
+      }
+    }
+  }
+  return ret
+})
 
 const keyboardKeys = ref([
   'qwertyuiop',
@@ -19,7 +55,7 @@ const emit = defineEmits<{
 
 <div class="keyboard">
   <div class="keyboard-row" v-for="row, i in keyboardKeys" :key="i">
-    <div class="keyboard-key" v-for="ch in row" :key="ch" @click="emit('keyClick', ch)">
+    <div class="keyboard-key" :class='{[`wordle-match-${alphabetMatchResultMap[ch]}`]: alphabetMatchResultMap[ch]}' v-for="ch in row" :key="ch" @click="emit('keyClick', ch)">
       {{ch.toUpperCase()}}
     </div>
   </div>
