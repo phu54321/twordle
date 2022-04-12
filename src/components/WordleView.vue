@@ -3,14 +3,15 @@ import { matchWord } from '@/matcher'
 import { computed } from 'vue'
 
 const props = defineProps<{
-  query: string[],
+  queries: string[],
+  lastQuery: string[],
   tryCount: number,
   answer: string
 }>()
 
 const wordLength = computed(() => props.answer.length)
 const matchClassMatrix = computed(() => {
-  return props.query.map(q => matchWord(q, props.answer))
+  return props.queries.map(q => matchWord(q, props.answer))
     .map(s => s.map(q => `wordle-match-${q}`))
 })
 
@@ -20,8 +21,13 @@ const matchClassMatrix = computed(() => {
 
 <div class="wordle-table">
   <div class="wordle-row" v-for='_, i in tryCount' :key="i">
-    <template v-if="query[i] !== undefined">
-      <div class="wordle-char" :class="[matchClassMatrix[i][j]]" v-for="_, j in wordLength" :key="j">{{query[i][j].toUpperCase()}}</div>
+    <template v-if="queries[i] !== undefined">
+      <div class="wordle-char" :class="[matchClassMatrix[i][j]]" v-for="_, j in wordLength" :key="j">{{queries[i][j].toUpperCase()}}</div>
+    </template>
+    <template v-else-if="queries.length === i">
+      <div class="wordle-char" v-for="_, j in wordLength" :key="j">
+        {{(lastQuery[j] || '&nbsp;').toUpperCase()}}
+      </div>
     </template>
     <template v-else>
       <div class="wordle-char" v-for="_, j in wordLength" :key="j">&nbsp;</div>
