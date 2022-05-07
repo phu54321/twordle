@@ -19,7 +19,12 @@ const matchResultMatrix = calculateMatchResultMatrix(props)
 <div class="wordle-table">
   <div class="wordle-row" v-for='_, i in tryCount' :key="i">
     <template v-if="queries[i] !== undefined">
-      <div class="wordle-char" :class="[`wordle-match-${matchResultMatrix[i][j]}`]" v-for="_, j in wordLength" :key="j">{{queries[i][j].toUpperCase()}}</div>
+      <div class="wordle-char"
+        :class="[`wordle-match-${matchResultMatrix[i][j]}`]"
+        :style="{'animation-delay': `${j * 0.1}s`}"
+        v-for="_, j in wordLength"
+        :key="j"
+        >{{queries[i][j].toUpperCase()}}</div>
     </template>
     <template v-else-if="queries.length === i">
       <div class="wordle-char" v-for="_, j in wordLength" :key="j">
@@ -52,18 +57,35 @@ const matchResultMatrix = calculateMatchResultMatrix(props)
       line-height: 2em;
       margin: 0 .1em;
 
-      &.wordle-match-exact {
-        background: #6eec45;
+      @mixin wordle-char-revealed($matchType, $color, $textColor) {
+        &.wordle-match-#{$matchType} {
+          animation: reveal-#{$matchType};
+          animation-duration: 0.5s;
+          animation-fill-mode: forwards;
+        }
+
+        @keyframes reveal-#{$matchType} {
+          0% {
+            background: #eee;
+            transform: rotateY(0deg);
+          }
+
+          50% {
+            background: #eee;
+            transform: rotateY(90deg);
+          }
+
+          100% {
+            background: #{$color};
+            transform: rotateY(0deg);
+            color: #{$textColor};
+          }
+        }
       }
 
-      &.wordle-match-misplaced {
-        background: #ffee9b;
-      }
-
-      &.wordle-match-none {
-        background: #444;
-        color: #fff;
-      }
+      @include wordle-char-revealed('exact', #6eec45, inherit);
+      @include wordle-char-revealed('misplaced', #ffee9b, inherit);
+      @include wordle-char-revealed('none', #444, #fff);
     }
   }
 }

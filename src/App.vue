@@ -4,11 +4,17 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import WordleView from './components/WordleView.vue'
 import VirtualKeyboard from './components/VirtualKeyboard.vue'
 import { getWordsByLength } from './dict'
+import { todayRandom } from '@/todayRandom'
+
+function initialWord (): string {
+  const words = getWordsByLength(5)
+  return words[todayRandom() % words.length]
+}
 
 const tryCount = 6
 const queries = ref([] as string[])
 const lastQuery = ref([] as string[])
-const answer = ref('pulse')
+const answer = ref(initialWord())
 
 function onKeyClick (ch: string) {
   if (ch === 'enter') {
@@ -27,12 +33,11 @@ function onKeyClick (ch: string) {
         alert('Correct!')
       } else {
         if (queries.value.length === tryCount) {
-          alert('Fail')
+          alert('Fail. Answer was ' + answer.value)
         }
       }
       lastQuery.value.length = 0
     }
-    // TODO: process
   } else if (ch === 'backspace') {
     if (lastQuery.value.length > 0) {
       lastQuery.value.pop()
