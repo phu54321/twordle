@@ -3,6 +3,8 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import WordleView from './components/WordleView.vue'
 import VirtualKeyboard from './components/VirtualKeyboard.vue'
+import { getWordsByLength } from './dict'
+
 const tryCount = 6
 const queries = ref([] as string[])
 const lastQuery = ref([] as string[])
@@ -13,6 +15,13 @@ function onKeyClick (ch: string) {
     if (lastQuery.value.length === answer.value.length) {
       const lastQueryString = lastQuery.value.join('')
       console.log(lastQueryString, lastQueryString.length)
+
+      const words = getWordsByLength(answer.value.length)
+      if (words.indexOf(lastQueryString) === -1) {
+        alert('Not a dictionary word!')
+        return
+      }
+
       queries.value.push(lastQueryString)
       if (lastQueryString === answer.value) {
         alert('Correct!')
